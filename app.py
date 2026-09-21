@@ -75,19 +75,33 @@ with st.sidebar:
     st.divider()
     st.subheader("🔑 Environment")
 
-    if ENV_PATH.exists():
-        env_keys = [k for k in dotenv_values(ENV_PATH) if k]
-        if env_keys:
-            for key in sorted(env_keys):
-                value = os.getenv(key, "")
-                if value:
-                    st.write(f"✅ `{key}` · `{value[:4]}…{value[-3:] if len(value) > 8 else ''}`")
-                else:
-                    st.write(f"⚠️ `{key}` · empty")
+    REQUIRED_KEYS = ["GROQ_API_KEY", "MISTRAL_API_KEY", "TAVILY_API_KEY"]
+
+    # Pull from st.secrets (Streamlit Cloud) into os.environ if not already set.
+    # On Render / other hosts, these should already be in os.environ via the
+    # platform's own dashboard, and .env only matters locally.
+    try:
+        for key in REQUIRED_KEYS:
+            if key not in os.environ and key in st.secrets:
+                os.environ[key] = st.secrets[key]
+    except Exception:
+        pass  # st.secrets raises if no secrets.toml exists locally — fine
+
+    any_found = False
+    for key in REQUIRED_KEYS:
+        value = os.getenv(key, "")
+        if value:
+            any_found = True
+            st.write(f"✅ `{key}` · `{value[:4]}…{value[-3:] if len(value) > 8 else ''}`")
         else:
-            st.warning("`.env` found but no keys parsed.")
-    else:
-        st.error("No `.env` file found next to `app.py`.")
+            st.write(f"❌ `{key}` · not set")
+
+    if not any_found:
+        st.error(
+            "No API keys found in environment, `.env`, or `st.secrets`. "
+            "On Render, set these under **Environment → Environment Variables**. "
+            "On Streamlit Cloud, use **Settings → Secrets**. Locally, use `.env`."
+        )
 
     st.divider()
     st.subheader("🕘 History")
@@ -140,7 +154,12 @@ for col, example in zip(example_cols, EXAMPLES):
 # --------------------------------------------------------------------------- #
 
 def execute(topic: str, scrape_chars: int) -> None:
-    run_research_pipeline, _, steps = load_pipeline()
+    try:
+        run_research_pipeline, _, steps = load_pipeline()
+    except Exception:
+        st.session_state.error = traceback.format_exc()
+        st.session_state.result = None
+        return
 
     progress = st.progress(0.0, text="Starting…")
     total_steps = len(steps)
