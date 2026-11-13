@@ -86,3 +86,9 @@ Search Agent (Tavily) ──▶ Reader Agent (scrape) ──▶ Writer Chain ─
 ## Evaluation
 
 Measure source relevance, citation accuracy, unsupported claims, latency and provider failures. The critic is not an independent fact-checker. No benchmark results are claimed.
+
+## Repository overview
+
+Four-stage AI research pipeline for web search, content extraction, report writing and critique.
+
+**Suggested GitHub topics:** `multi-agent` `langchain` `langgraph` `groq` `tavily` `streamlit` `python`.
