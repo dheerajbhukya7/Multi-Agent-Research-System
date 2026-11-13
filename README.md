@@ -36,34 +36,36 @@ Each step streams live into the UI with progress, timing, and content previews
 
 ## Setup
 
-\`\`\`bash
-git clone <repo-url>
-cd Multiagentsystem
+```bash
+git clone https://github.com/dheerajbhukya7/Multi-Agent-Research-System.git
+cd Multi-Agent-Research-System
+python -m venv .venv
+# Activate the environment
 pip install -r requirements.txt
-\`\`\`
+```
 
 Create a `.env` file with:
-\`\`\`
+```
 GROQ_API_KEY=your_key
 MISTRAL_API_KEY=your_key
 TAVILY_API_KEY=your_key
-\`\`\`
+```
 
 ## Run
 
 **CLI:**
-\`\`\`bash
+```bash
 python pipeline.py
-\`\`\`
+```
 
 **Web UI:**
-\`\`\`bash
+```bash
 streamlit run app.py
-\`\`\`
+```
 
 ## Architecture
 
-\`\`\`
+```
 Topic Input
     │
     ▼
@@ -72,7 +74,7 @@ Search Agent (Tavily) ──▶ Reader Agent (scrape) ──▶ Writer Chain ─
     └──────────────────────────┴────────────────────────┴───────────────┘
                                     │
                             Streamlit UI (live progress + report tabs)
-\`\`\`
+```
 
 ## Roadmap
 
@@ -80,3 +82,7 @@ Search Agent (Tavily) ──▶ Reader Agent (scrape) ──▶ Writer Chain ─
 - [ ] Citation tracking in the final report
 - [ ] Configurable LLM provider per agent
 - [ ] Async parallel search + scrape for speed
+
+## Evaluation
+
+Measure source relevance, citation accuracy, unsupported claims, latency and provider failures. The critic is not an independent fact-checker. No benchmark results are claimed.
