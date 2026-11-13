@@ -1,0 +1,18 @@
+name: Python CI
+on:
+  push:
+    branches: [main, portfolio-v2]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m py_compile agents.py app.py pipeline.py pipeline2.py tools.py
